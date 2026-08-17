@@ -1,0 +1,9 @@
+spring:
+  cache:
+    type: none
+app:
+  cache:
+    enabled: false
+  jwt:
+    secret: test-secret-that-is-long-enough-for-hmac-sha-signing
+

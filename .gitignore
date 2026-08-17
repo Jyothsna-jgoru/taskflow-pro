@@ -1,0 +1,30 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Java
+target/
+*.log
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# JavaScript
+frontend/node_modules/
+frontend/dist/
+frontend/.npm-cache/
+*.tsbuildinfo
+npm-debug.log*
+
+# Editors and operating systems
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Test and load-test output
+coverage/
+load-tests/results/*.json
+!load-tests/results/.gitkeep

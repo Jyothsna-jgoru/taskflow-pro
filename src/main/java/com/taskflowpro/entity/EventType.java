@@ -1,0 +1,12 @@
+package com.taskflowpro.entity;
+
+public enum EventType {
+  WORKSPACE_CREATED,
+  PROJECT_CREATED,
+  PROJECT_UPDATED,
+  TASK_CREATED,
+  TASK_ASSIGNED,
+  TASK_STATUS_CHANGED,
+  TASK_PRIORITY_CHANGED,
+  COMMENT_ADDED
+}

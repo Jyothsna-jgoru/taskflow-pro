@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: taskflow-pro
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/taskflow}
+    username: ${DB_USERNAME:taskflow}
+    password: ${DB_PASSWORD:taskflow}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc.time_zone: UTC
+  flyway:
+    enabled: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 2s
+  cache:
+    type: redis
+    redis:
+      time-to-live: 120s
+      cache-null-values: false
+  jackson:
+    default-property-inclusion: non_null
+  mvc:
+    problemdetails:
+      enabled: false
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: never
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+  api-docs:
+    path: /v3/api-docs
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-this-local-development-secret-to-at-least-32-bytes}
+    ttl-minutes: ${JWT_TTL_MINUTES:60}
+  cors-origins: ${CORS_ORIGINS:http://localhost:3000,http://localhost:5173}
+  cache:
+    enabled: ${CACHE_ENABLED:true}
+    dashboard-ttl: ${DASHBOARD_CACHE_TTL:PT2M}
+    query-ttl: ${QUERY_CACHE_TTL:PT1M}
+
