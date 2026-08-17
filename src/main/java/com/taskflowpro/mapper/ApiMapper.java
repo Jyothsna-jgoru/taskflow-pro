@@ -2,6 +2,7 @@ package com.taskflowpro.mapper;
 
 import com.taskflowpro.dto.*;
 import com.taskflowpro.entity.*;
+import java.util.Set;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -36,7 +37,7 @@ public class ApiMapper {
         user(value.getAssignee()),
         user(value.getReporter()),
         value.getDueDate(),
-        value.getLabels(),
+        Set.copyOf(value.getLabels()),
         value.getVersion(),
         value.getCreatedAt(),
         value.getUpdatedAt());
