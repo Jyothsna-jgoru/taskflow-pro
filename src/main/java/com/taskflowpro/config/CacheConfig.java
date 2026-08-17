@@ -1,6 +1,8 @@
 package com.taskflowpro.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import java.time.Duration;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,12 +23,19 @@ public class CacheConfig {
       ObjectMapper objectMapper,
       @Value("${app.cache.dashboard-ttl:PT2M}") Duration dashboardTtl,
       @Value("${app.cache.query-ttl:PT1M}") Duration queryTtl) {
+    var cacheObjectMapper = objectMapper.copy();
+    cacheObjectMapper.activateDefaultTyping(
+        BasicPolymorphicTypeValidator.builder()
+            .allowIfSubType("com.taskflowpro.")
+            .allowIfSubType("java.lang.")
+            .allowIfSubType("java.time.")
+            .allowIfSubType("java.util.")
+            .build(),
+        ObjectMapper.DefaultTyping.EVERYTHING,
+        JsonTypeInfo.As.PROPERTY);
     RedisSerializationContext.SerializationPair<Object> values =
         RedisSerializationContext.SerializationPair.fromSerializer(
-            GenericJackson2JsonRedisSerializer.builder()
-                .objectMapper(objectMapper.copy())
-                .defaultTyping(true)
-                .build());
+            new GenericJackson2JsonRedisSerializer(cacheObjectMapper));
     RedisCacheConfiguration base =
         RedisCacheConfiguration.defaultCacheConfig()
             .serializeValuesWith(values)

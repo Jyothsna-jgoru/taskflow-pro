@@ -2,6 +2,8 @@ package com.taskflowpro.config;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.taskflowpro.dto.DashboardDtos.DashboardResponse;
@@ -14,11 +16,16 @@ class CacheSerializationTest {
   @Test
   void dashboardRecordsRoundTripThroughRedisJsonSerializer() {
     var mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
-    var serializer =
-        GenericJackson2JsonRedisSerializer.builder()
-            .objectMapper(mapper)
-            .defaultTyping(true)
-            .build();
+    mapper.activateDefaultTyping(
+        com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator.builder()
+            .allowIfSubType("com.taskflowpro.")
+            .allowIfSubType("java.lang.")
+            .allowIfSubType("java.time.")
+            .allowIfSubType("java.util.")
+            .build(),
+        ObjectMapper.DefaultTyping.EVERYTHING,
+        JsonTypeInfo.As.PROPERTY);
+    var serializer = new GenericJackson2JsonRedisSerializer(mapper);
     var dashboard =
         new DashboardResponse(
             4,
@@ -35,6 +42,7 @@ class CacheSerializationTest {
     assertInstanceOf(DashboardResponse.class, restored);
     assertEquals(4, ((DashboardResponse) restored).totalTasks());
     Map<?, ?> restoredStatuses = ((DashboardResponse) restored).tasksByStatus();
-    assertEquals(1L, ((Number) restoredStatuses.get(TaskStatus.DONE)).longValue());
+    assertInstanceOf(Long.class, restoredStatuses.get(TaskStatus.DONE));
+    assertEquals(1L, restoredStatuses.get(TaskStatus.DONE));
   }
 }
