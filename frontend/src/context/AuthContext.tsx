@@ -6,7 +6,7 @@ interface AuthValue {
   user: User | null
   loading: boolean
   login: (email: string, password: string) => Promise<void>
-  register: (displayName: string, email: string, password: string) => Promise<void>
+  register: (displayName: string, email: string, password: string, invitationToken?: string) => Promise<void>
   logout: () => void
 }
 const AuthContext = createContext<AuthValue | null>(null)
@@ -57,8 +57,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       login: async (email, password) =>
         store((await api.post<AuthResponse>('/auth/login', { email, password })).data),
-      register: async (displayName, email, password) =>
-        store((await api.post<AuthResponse>('/auth/register', { displayName, email, password })).data),
+      register: async (displayName, email, password, invitationToken) =>
+        store(
+          (
+            await api.post<AuthResponse>('/auth/register', {
+              displayName,
+              email,
+              password,
+              invitationToken,
+            })
+          ).data,
+        ),
       logout: () => {
         api.post('/auth/logout').catch(() => undefined)
         localStorage.removeItem('taskflow_token')

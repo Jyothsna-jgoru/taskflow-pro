@@ -30,6 +30,36 @@ curl -s "http://localhost:8080/api/workspaces/$WORKSPACE_ID/members" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
+## Invite, change roles, and remove members
+
+Admins use one endpoint for both cases. A registered email is added immediately. An unregistered email creates a pending invitation and returns an opaque, seven-day registration token. The React app turns that token into a copyable link; share the link through your normal team channel. The registration screen validates the link and locks the invited email, so the recipient does not need to guess or type it.
+
+```bash
+curl -s -X POST "http://localhost:8080/api/workspaces/$WORKSPACE_ID/members/invite-or-add" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"new.teammate@example.com","role":"MEMBER"}'
+
+curl -s "http://localhost:8080/api/workspaces/$WORKSPACE_ID/members/invitations" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+The invitation response contains `invitationToken` only at creation or regeneration time. Build the shareable local link as `http://localhost:3000/register?invite=<invitationToken>`; a hosted site uses its own public origin. The database stores only a SHA-256 hash, and an admin can use **Copy new link** to invalidate the old token and create another one.
+
+Admins can cancel a pending invitation, update a member role, or remove a member. The API prevents removal or demotion of the final workspace admin.
+
+```bash
+INVITATION_ID='<invitation UUID>'
+MEMBERSHIP_ID='<membership UUID>'
+curl -s -X DELETE "http://localhost:8080/api/workspaces/$WORKSPACE_ID/members/invitations/$INVITATION_ID" \
+  -H "Authorization: Bearer $TOKEN"
+
+curl -s -X PATCH "http://localhost:8080/api/workspaces/$WORKSPACE_ID/members/$MEMBERSHIP_ID" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"role":"MANAGER"}'
+```
+
 ## Create a project and task
 
 ```bash

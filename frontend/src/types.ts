@@ -31,6 +31,25 @@ export interface Member {
   role: Role
   joinedAt: string
 }
+export interface WorkspaceInvitation {
+  invitationId: string
+  email: string
+  role: Role
+  invitedBy: User
+  createdAt: string
+  expiresAt: string
+}
+export interface InviteOrAddResponse {
+  action: 'ADDED' | 'INVITED'
+  member?: Member
+  invitation?: WorkspaceInvitation
+  invitationToken?: string
+}
+export interface InvitationPreview {
+  email: string
+  workspaceName: string
+  expiresAt: string
+}
 export interface Project {
   id: string
   workspaceId: string

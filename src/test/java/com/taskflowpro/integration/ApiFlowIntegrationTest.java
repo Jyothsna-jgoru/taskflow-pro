@@ -64,6 +64,56 @@ class ApiFlowIntegrationTest {
                 .andExpect(status().isCreated())
                 .andReturn());
     String workspaceId = workspace.get("id").asText();
+
+    JsonNode invitationResponse =
+        body(
+            mvc.perform(
+                    post("/api/workspaces/{id}/members/invite-or-add", workspaceId)
+                        .header("Authorization", bearer(admin))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"pending@test.local\",\"role\":\"MANAGER\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.action").value("INVITED"))
+                .andExpect(jsonPath("$.invitation.email").value("pending@test.local"))
+                .andReturn());
+    String invitationToken = invitationResponse.get("invitationToken").asText();
+    mvc.perform(get("/api/invitations/{token}", invitationToken))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.email").value("pending@test.local"))
+        .andExpect(jsonPath("$.workspaceName").value("Delivery"));
+    mvc.perform(
+            get("/api/workspaces/{id}/members/invitations", workspaceId)
+                .header("Authorization", bearer(admin)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].email").value("pending@test.local"));
+    mvc.perform(
+            post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    "{\"displayName\":\"Wrong teammate\",\"email\":\"wrong@test.local\",\"password\":\"Password1!\",\"invitationToken\":\""
+                        + invitationToken
+                        + "\"}"))
+        .andExpect(status().isBadRequest());
+    String pendingUser =
+        register("Pending teammate", "pending@test.local", "Password1!", invitationToken);
+    mvc.perform(get("/api/invitations/{token}", invitationToken))
+        .andExpect(status().isBadRequest());
+    mvc.perform(
+            get("/api/workspaces/{id}/members", workspaceId)
+                .header("Authorization", bearer(admin)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[1].email").value("pending@test.local"))
+        .andExpect(jsonPath("$[1].role").value("MANAGER"));
+    mvc.perform(
+            get("/api/workspaces/{id}/members/invitations", workspaceId)
+                .header("Authorization", bearer(admin)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isEmpty());
+    mvc.perform(
+            get("/api/workspaces/{id}/tasks", workspaceId)
+                .header("Authorization", bearer(pendingUser)))
+        .andExpect(status().isOk());
+
     mvc.perform(
             get("/api/workspaces/{id}/tasks", workspaceId)
                 .header("Authorization", bearer(outsider)))
@@ -166,6 +216,13 @@ class ApiFlowIntegrationTest {
   }
 
   private String register(String name, String email, String password) throws Exception {
+    return register(name, email, password, null);
+  }
+
+  private String register(String name, String email, String password, String invitationToken)
+      throws Exception {
+    String tokenField =
+        invitationToken == null ? "" : ",\"invitationToken\":\"" + invitationToken + "\"";
     JsonNode response =
         body(
             mvc.perform(
@@ -178,7 +235,9 @@ class ApiFlowIntegrationTest {
                                 + email
                                 + "\",\"password\":\""
                                 + password
-                                + "\"}"))
+                                + "\""
+                                + tokenField
+                                + "}"))
                 .andExpect(status().isCreated())
                 .andReturn());
     return response.get("accessToken").asText();

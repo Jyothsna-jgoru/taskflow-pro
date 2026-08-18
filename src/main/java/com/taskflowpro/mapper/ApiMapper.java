@@ -24,6 +24,16 @@ public class ApiMapper {
         value.getJoinedAt());
   }
 
+  public WorkspaceDtos.InvitationResponse invitation(WorkspaceInvitation value) {
+    return new WorkspaceDtos.InvitationResponse(
+        value.getId(),
+        value.getEmail(),
+        value.getRole(),
+        user(value.getInvitedBy()),
+        value.getCreatedAt(),
+        value.getExpiresAt());
+  }
+
   public TaskDtos.TaskResponse task(TaskItem value) {
     return new TaskDtos.TaskResponse(
         value.getId(),

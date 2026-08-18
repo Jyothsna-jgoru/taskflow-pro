@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import com.taskflowpro.dto.WorkspaceDtos.MemberRequest;
 import com.taskflowpro.dto.WorkspaceDtos.RoleRequest;
 import com.taskflowpro.dto.WorkspaceDtos.WorkspaceRequest;
 import com.taskflowpro.entity.*;
@@ -11,6 +12,7 @@ import com.taskflowpro.exception.ConflictException;
 import com.taskflowpro.mapper.ApiMapper;
 import com.taskflowpro.repository.*;
 import com.taskflowpro.security.CurrentUser;
+import com.taskflowpro.security.InvitationTokenService;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,18 +25,29 @@ class WorkspaceServiceTest {
   @Mock WorkspaceRepository workspaces;
   @Mock WorkspaceMemberRepository members;
   @Mock UserRepository users;
+  @Mock WorkspaceInvitationRepository invitations;
   @Mock CurrentUser currentUser;
   @Mock MembershipGuard guard;
   @Mock ActivityService activity;
 
   WorkspaceService service;
+  InvitationTokenService invitationTokens;
   User actor;
 
   @BeforeEach
   void setUp() {
+    invitationTokens = new InvitationTokenService();
     service =
         new WorkspaceService(
-            workspaces, members, users, currentUser, guard, activity, new ApiMapper());
+            workspaces,
+            members,
+            users,
+            invitations,
+            invitationTokens,
+            currentUser,
+            guard,
+            activity,
+            new ApiMapper());
     actor = new User("admin@example.com", "hash", "Admin User");
     when(currentUser.require()).thenReturn(actor);
   }
@@ -67,5 +80,27 @@ class WorkspaceServiceTest {
                 workspace.getId(), onlyAdmin.getId(), new RoleRequest(WorkspaceRole.MEMBER)));
 
     assertEquals(WorkspaceRole.ADMIN, onlyAdmin.getRole());
+  }
+
+  @Test
+  void createsPendingInvitationForAnEmailWithoutAnAccount() {
+    Workspace workspace = new Workspace("Delivery", null, actor);
+    when(workspaces.findById(workspace.getId())).thenReturn(Optional.of(workspace));
+    when(users.findByEmailIgnoreCase("new.teammate@example.com")).thenReturn(Optional.empty());
+    when(invitations.findByWorkspaceIdAndEmailIgnoreCase(workspace.getId(), "new.teammate@example.com"))
+        .thenReturn(Optional.empty());
+    when(invitations.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+    var result =
+        service.inviteOrAdd(
+            workspace.getId(), new MemberRequest("new.teammate@example.com", WorkspaceRole.MANAGER));
+
+    assertEquals("INVITED", result.action());
+    assertNull(result.member());
+    assertEquals("new.teammate@example.com", result.invitation().email());
+    assertEquals(WorkspaceRole.MANAGER, result.invitation().role());
+    assertNotNull(result.invitationToken());
+    verify(activity)
+        .record(any(), isNull(), eq(actor), eq(EventType.MEMBER_INVITED), contains("pending invitation"));
   }
 }

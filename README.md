@@ -29,7 +29,7 @@ Work tracking becomes unreliable when ownership, authorization, project context,
 
 - JWT registration, login, logout, current-user lookup, BCrypt password hashing, and consistent JSON errors
 - Privacy-friendly, admin-only login history that records successful workspace-member sign-ins by account and timestamp
-- Workspace-scoped `ADMIN`, `MANAGER`, and `MEMBER` authorization with protected membership administration
+- Workspace-scoped `ADMIN`, `MANAGER`, and `MEMBER` authorization with protected membership administration, pending invitations, role changes, and removals
 - Projects with ownership, dates, progress, lifecycle states, and archival
 - Paginated tasks with full-text search, filtering, sorting, labels, assignment, due dates, five workflow states, and four priorities
 - Optimistic `version` checks that reject stale updates with `409 Conflict`
@@ -73,8 +73,10 @@ The backend is a modular monolith with controllers, DTOs, services, repositories
 ```mermaid
 erDiagram
     USERS ||--o{ WORKSPACE_MEMBERS : joins
+    USERS ||--o{ WORKSPACE_INVITATIONS : invited_by
     USERS ||--o{ WORKSPACES : creates
     WORKSPACES ||--o{ WORKSPACE_MEMBERS : contains
+    WORKSPACES ||--o{ WORKSPACE_INVITATIONS : has_pending
     WORKSPACES ||--o{ PROJECTS : owns
     WORKSPACES ||--o{ TASKS : scopes
     USERS ||--o{ PROJECTS : owns
@@ -97,6 +99,7 @@ erDiagram
     }
     WORKSPACES { uuid id PK varchar name uuid created_by FK }
     WORKSPACE_MEMBERS { uuid id PK uuid workspace_id FK uuid user_id FK varchar role }
+    WORKSPACE_INVITATIONS { uuid id PK uuid workspace_id FK varchar email varchar role timestamptz expires_at }
     PROJECTS { uuid id PK uuid workspace_id FK uuid owner_id FK varchar status date target_date }
     TASKS { uuid id PK uuid workspace_id FK uuid project_id FK uuid assignee_id FK varchar status varchar priority bigint version }
     TASK_LABELS { uuid task_id FK varchar label }
@@ -278,7 +281,7 @@ taskflow-pro/
 
 - This version uses short-lived access tokens without refresh-token rotation or server-side revocation. Logout discards the browser token.
 - Rate limiting is not included; a real multi-instance deployment should add a Redis-backed limiter at the gateway or API boundary.
-- Member invitation currently adds an already registered email. Email delivery and pending invite tokens are future work and would otherwise require another service.
+- Admins can add existing accounts immediately or create a seven-day pending invitation for a new email. TaskFlow copies an opaque registration link that locks the invited email on the registration screen; the admin shares that link through their normal team channel. This build deliberately does not send email itself.
 - Cache eviction is intentionally broad within each logical cache; large installations should use workspace-indexed keys or event-driven invalidation.
 - Compose is a local/development deployment. Production still requires TLS, secret management, backups, observability, and infrastructure-specific hardening.
 

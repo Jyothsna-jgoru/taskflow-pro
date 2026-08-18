@@ -52,6 +52,30 @@ public class WorkspaceController {
     return service.addMember(workspaceId, request);
   }
 
+  @PostMapping("/{workspaceId}/members/invite-or-add")
+  @ResponseStatus(HttpStatus.CREATED)
+  public InviteOrAddResponse inviteOrAdd(
+      @PathVariable UUID workspaceId, @Valid @RequestBody MemberRequest request) {
+    return service.inviteOrAdd(workspaceId, request);
+  }
+
+  @GetMapping("/{workspaceId}/members/invitations")
+  public List<InvitationResponse> invitations(@PathVariable UUID workspaceId) {
+    return service.listInvitations(workspaceId);
+  }
+
+  @DeleteMapping("/{workspaceId}/members/invitations/{invitationId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void cancelInvitation(@PathVariable UUID workspaceId, @PathVariable UUID invitationId) {
+    service.cancelInvitation(workspaceId, invitationId);
+  }
+
+  @PostMapping("/{workspaceId}/members/invitations/{invitationId}/regenerate")
+  public InviteOrAddResponse regenerateInvitation(
+      @PathVariable UUID workspaceId, @PathVariable UUID invitationId) {
+    return service.regenerateInvitation(workspaceId, invitationId);
+  }
+
   @PatchMapping("/{workspaceId}/members/{membershipId}")
   public MemberResponse role(
       @PathVariable UUID workspaceId,

@@ -31,4 +31,17 @@ public final class WorkspaceDtos {
       String email,
       WorkspaceRole role,
       Instant joinedAt) {}
+
+  public record InvitationResponse(
+      UUID invitationId,
+      String email,
+      WorkspaceRole role,
+      AuthDtos.UserResponse invitedBy,
+      Instant createdAt,
+      Instant expiresAt) {}
+
+  public record InviteOrAddResponse(
+      String action, MemberResponse member, InvitationResponse invitation, String invitationToken) {}
+
+  public record InvitationPreviewResponse(String email, String workspaceName, Instant expiresAt) {}
 }
