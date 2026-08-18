@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: taskflow-pro-api
+    name: jyothsna-taskflow-pro-api
     runtime: docker
     region: oregon
     plan: free
@@ -38,9 +38,11 @@ services:
         value: PT1M
       - key: TASKFLOW_SEED_DEMO_DATA
         value: "true"
+      - key: CORS_ORIGINS
+        value: https://jyothsna-taskflow-pro-web.onrender.com
 
   - type: web
-    name: taskflow-pro-web
+    name: jyothsna-taskflow-pro-web
     runtime: docker
     region: oregon
     plan: free
@@ -49,11 +51,8 @@ services:
     healthCheckPath: /healthz
     autoDeployTrigger: checksPass
     envVars:
-      - key: BACKEND_HOSTPORT
-        fromService:
-          type: web
-          name: taskflow-pro-api
-          property: hostport
+      - key: BACKEND_URL
+        value: https://jyothsna-taskflow-pro-api.onrender.com
 
   - type: keyvalue
     name: taskflow-pro-cache

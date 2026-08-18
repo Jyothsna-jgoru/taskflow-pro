@@ -11,16 +11,17 @@ server {
   }
 
   location /api/ {
-    proxy_pass http://${BACKEND_HOSTPORT};
+    proxy_pass ${BACKEND_URL};
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_ssl_server_name on;
   }
 
-  location /actuator/ { proxy_pass http://${BACKEND_HOSTPORT}; }
-  location /swagger-ui/ { proxy_pass http://${BACKEND_HOSTPORT}; }
-  location = /swagger-ui.html { proxy_pass http://${BACKEND_HOSTPORT}; }
-  location /v3/api-docs { proxy_pass http://${BACKEND_HOSTPORT}; }
+  location /actuator/ { proxy_pass ${BACKEND_URL}; proxy_ssl_server_name on; }
+  location /swagger-ui/ { proxy_pass ${BACKEND_URL}; proxy_ssl_server_name on; }
+  location = /swagger-ui.html { proxy_pass ${BACKEND_URL}; proxy_ssl_server_name on; }
+  location /v3/api-docs { proxy_pass ${BACKEND_URL}; proxy_ssl_server_name on; }
 
   location / {
     try_files $uri $uri/ /index.html;

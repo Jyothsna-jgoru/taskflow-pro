@@ -2,12 +2,12 @@
 
 This repository includes a Render Blueprint in [`render.yaml`](../render.yaml). It provisions these connected parts from the same GitHub repository:
 
-- `taskflow-pro-web`: the public React application behind Nginx.
-- `taskflow-pro-api`: the Spring Boot API and Swagger UI.
+- `jyothsna-taskflow-pro-web`: the public React application behind Nginx.
+- `jyothsna-taskflow-pro-api`: the Spring Boot API and Swagger UI.
 - `taskflow-pro-db`: PostgreSQL persistence with Flyway migrations.
 - `taskflow-pro-cache`: Redis-compatible cache for dashboard and query reads.
 
-The public website proxies API requests to the API service over the provider's private network. No database, cache, JWT secret, or application credential is committed to the repository.
+The public website proxies API requests to the API service over HTTPS. This connection is intentionally public because the selected free web-service tier cannot receive private-network traffic. The API still requires JWT authentication for protected endpoints. No database, cache, JWT secret, or application credential is committed to the repository.
 
 The application activates a dedicated `hosted` Spring profile there, so the managed Redis connection URL is never interpreted as an empty local or test setting.
 
@@ -17,11 +17,11 @@ The application activates a dedicated `hosted` Spring profile there, so the mana
 2. Create or sign in to a [Render](https://render.com) account.
 3. Select **New** → **Blueprint**, then connect the `Jyothsna-jgoru/taskflow-pro` GitHub repository.
 4. Render detects the root `render.yaml`. Review the four resources and select **Apply**.
-5. Wait for the API migration, cache, and web service deployments to complete. Open the generated URL for `taskflow-pro-web`.
+5. Wait for the API migration, cache, and web service deployments to complete. Open the generated URL for `jyothsna-taskflow-pro-web`.
 6. Confirm `https://<your-web-service-url>/healthz` returns `ok`, then sign in from the website.
 7. Copy the actual web-service URL into the **Live project** section of the README. Do this only after the deployment is healthy.
 
-Render assigns the public URL during deployment, so the repository deliberately does not guess or advertise one before that step succeeds.
+The intended service names produce URLs based on `jyothsna-taskflow-pro-web` and `jyothsna-taskflow-pro-api`. Confirm the actual URLs shown in the Render dashboard before adding either to the README.
 
 ## Verification checklist
 
