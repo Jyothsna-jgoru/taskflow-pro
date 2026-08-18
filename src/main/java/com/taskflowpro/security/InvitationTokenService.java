@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.HexFormat;
 import org.springframework.stereotype.Component;
 
 /** Generates opaque invitation secrets and stores only their SHA-256 digest. */
