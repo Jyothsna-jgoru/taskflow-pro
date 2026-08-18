@@ -16,7 +16,6 @@ spring:
     enabled: true
   data:
     redis:
-      url: ${REDIS_URL:}
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       timeout: 2s

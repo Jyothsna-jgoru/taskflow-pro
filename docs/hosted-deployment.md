@@ -9,6 +9,8 @@ This repository includes a Render Blueprint in [`render.yaml`](../render.yaml). 
 
 The public website proxies API requests to the API service over the provider's private network. No database, cache, JWT secret, or application credential is committed to the repository.
 
+The application activates a dedicated `hosted` Spring profile there, so the managed Redis connection URL is never interpreted as an empty local or test setting.
+
 ## Publish the stack
 
 1. Push the current `main` branch to GitHub and confirm its CI workflow is green.

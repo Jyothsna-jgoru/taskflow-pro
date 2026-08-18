@@ -10,7 +10,7 @@ services:
     autoDeployTrigger: checksPass
     envVars:
       - key: SPRING_PROFILES_ACTIVE
-        value: dev
+        value: "dev,hosted"
       - key: DB_URL
         fromDatabase:
           name: taskflow-pro-db
