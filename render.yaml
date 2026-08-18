@@ -1,0 +1,70 @@
+services:
+  - type: web
+    name: taskflow-pro-api
+    runtime: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: dev
+      - key: DB_URL
+        fromDatabase:
+          name: taskflow-pro-db
+          property: connectionString
+      - key: DB_USERNAME
+        fromDatabase:
+          name: taskflow-pro-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: taskflow-pro-db
+          property: password
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: taskflow-pro-cache
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CACHE_ENABLED
+        value: "true"
+      - key: DASHBOARD_CACHE_TTL
+        value: PT2M
+      - key: QUERY_CACHE_TTL
+        value: PT1M
+      - key: TASKFLOW_SEED_DEMO_DATA
+        value: "true"
+
+  - type: web
+    name: taskflow-pro-web
+    runtime: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    healthCheckPath: /healthz
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: BACKEND_HOSTPORT
+        fromService:
+          type: web
+          name: taskflow-pro-api
+          property: hostport
+
+  - type: keyvalue
+    name: taskflow-pro-cache
+    region: oregon
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
+
+databases:
+  - name: taskflow-pro-db
+    region: oregon
+    plan: free
+    postgresMajorVersion: "17"
+    ipAllowList: []

@@ -78,4 +78,13 @@ curl -s "http://localhost:8080/api/workspaces/$WORKSPACE_ID/dashboard" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
+## Admin login history
+
+Workspace admins can review successful sign-ins by workspace members. The endpoint returns the account and timestamp only; it does not store passwords, IP addresses, or browser-tracking data.
+
+```bash
+curl -s "http://localhost:8080/api/workspaces/$WORKSPACE_ID/security/login-history?limit=20" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
 Errors use one JSON shape with timestamp, status, error, message, path, and optional field-level validation details.

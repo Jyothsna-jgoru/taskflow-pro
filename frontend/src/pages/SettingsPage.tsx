@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Database, KeyRound, Save, Server, ShieldCheck } from 'lucide-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Clock3, Database, KeyRound, Save, Server, ShieldCheck } from 'lucide-react'
 import { PageHeader } from '../components/States'
 import { useWorkspace } from '../context/WorkspaceContext'
 import { useToast } from '../context/ToastContext'
 import { api, errorMessage } from '../lib/api'
-import type { Workspace } from '../types'
+import { relativeTime } from '../lib/format'
+import type { Activity, Workspace } from '../types'
 export function SettingsPage() {
   const { workspace } = useWorkspace()
   const { show } = useToast()
@@ -26,6 +27,12 @@ export function SettingsPage() {
     onError: (e) => show(errorMessage(e), 'error'),
   })
   const isAdmin = workspace?.currentUserRole === 'ADMIN'
+  const loginHistory = useQuery({
+    queryKey: ['login-history', workspace?.id],
+    enabled: Boolean(workspace && isAdmin),
+    queryFn: async () =>
+      (await api.get<Activity[]>(`/workspaces/${workspace!.id}/security/login-history`)).data,
+  })
   return (
     <>
       <PageHeader
@@ -99,6 +106,41 @@ export function SettingsPage() {
               </div>
             </div>
           </section>
+          {isAdmin && (
+            <section className="panel p-6">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <h2 className="font-extrabold">Login history</h2>
+                  <p className="mt-1 text-xs text-slate-400">Successful workspace-member sign-ins only.</p>
+                </div>
+                <Clock3 className="shrink-0 text-indigo-500" size={20} />
+              </div>
+              <div className="mt-5 space-y-1">
+                {loginHistory.data?.map((event) => (
+                  <div
+                    key={event.id}
+                    className="flex items-center justify-between gap-4 rounded-xl px-2 py-3 hover:bg-slate-50"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-slate-700">
+                        {event.actor.displayName}
+                      </p>
+                      <p className="truncate text-xs text-slate-400">{event.actor.email}</p>
+                    </div>
+                    <time className="shrink-0 text-xs font-medium text-slate-400" dateTime={event.createdAt}>
+                      {relativeTime(event.createdAt)}
+                    </time>
+                  </div>
+                ))}
+                {loginHistory.isLoading && (
+                  <p className="py-4 text-sm text-slate-400">Loading login history…</p>
+                )}
+                {!loginHistory.isLoading && !loginHistory.data?.length && (
+                  <p className="py-4 text-sm text-slate-400">No successful sign-ins recorded yet.</p>
+                )}
+              </div>
+            </section>
+          )}
           <section className="panel p-6">
             <div className="flex items-center gap-3">
               <Database className="text-indigo-500" size={20} />

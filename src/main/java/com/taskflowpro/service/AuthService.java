@@ -1,11 +1,12 @@
 package com.taskflowpro.service;
 
 import com.taskflowpro.dto.AuthDtos.*;
-import com.taskflowpro.entity.User;
+import com.taskflowpro.entity.*;
 import com.taskflowpro.exception.ApiException;
 import com.taskflowpro.exception.ConflictException;
 import com.taskflowpro.mapper.ApiMapper;
 import com.taskflowpro.repository.UserRepository;
+import com.taskflowpro.repository.WorkspaceMemberRepository;
 import com.taskflowpro.security.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,18 +20,24 @@ public class AuthService {
   private final JwtService jwt;
   private final CurrentUser currentUser;
   private final ApiMapper mapper;
+  private final WorkspaceMemberRepository members;
+  private final ActivityService activity;
 
   public AuthService(
       UserRepository users,
       PasswordEncoder passwords,
       JwtService jwt,
       CurrentUser currentUser,
-      ApiMapper mapper) {
+      ApiMapper mapper,
+      WorkspaceMemberRepository members,
+      ActivityService activity) {
     this.users = users;
     this.passwords = passwords;
     this.jwt = jwt;
     this.currentUser = currentUser;
     this.mapper = mapper;
+    this.members = members;
+    this.activity = activity;
   }
 
   @Transactional
@@ -43,7 +50,7 @@ public class AuthService {
     return response(user);
   }
 
-  @Transactional(readOnly = true)
+  @Transactional
   public AuthResponse login(LoginRequest request) {
     User user =
         users
@@ -52,6 +59,16 @@ public class AuthService {
                 () -> new ApiException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
     if (!passwords.matches(request.password(), user.getPasswordHash()))
       throw new ApiException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+    members
+        .findMembershipsWithWorkspace(user.getId())
+        .forEach(
+            membership ->
+                activity.record(
+                    membership.getWorkspace(),
+                    null,
+                    user,
+                    EventType.USER_SIGNED_IN,
+                    user.getDisplayName() + " signed in"));
     return response(user);
   }
 

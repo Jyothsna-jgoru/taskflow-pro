@@ -16,6 +16,7 @@ spring:
     enabled: true
   data:
     redis:
+      url: ${REDIS_URL:}
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       timeout: 2s
@@ -58,4 +59,3 @@ app:
     enabled: ${CACHE_ENABLED:true}
     dashboard-ttl: ${DASHBOARD_CACHE_TTL:PT2M}
     query-ttl: ${QUERY_CACHE_TTL:PT1M}
-

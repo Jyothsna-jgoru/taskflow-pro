@@ -1,6 +1,7 @@
 package com.taskflowpro.entity;
 
 public enum EventType {
+  USER_SIGNED_IN,
   WORKSPACE_CREATED,
   PROJECT_CREATED,
   PROJECT_UPDATED,

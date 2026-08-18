@@ -1,5 +1,5 @@
 server {
-  listen 80;
+  listen ${PORT};
   server_name _;
   root /usr/share/nginx/html;
   index index.html;
@@ -11,16 +11,16 @@ server {
   }
 
   location /api/ {
-    proxy_pass http://backend:8080;
+    proxy_pass http://${BACKEND_HOSTPORT};
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-Proto $scheme;
   }
 
-  location /actuator/ { proxy_pass http://backend:8080; }
-  location /swagger-ui/ { proxy_pass http://backend:8080; }
-  location = /swagger-ui.html { proxy_pass http://backend:8080; }
-  location /v3/api-docs { proxy_pass http://backend:8080; }
+  location /actuator/ { proxy_pass http://${BACKEND_HOSTPORT}; }
+  location /swagger-ui/ { proxy_pass http://${BACKEND_HOSTPORT}; }
+  location = /swagger-ui.html { proxy_pass http://${BACKEND_HOSTPORT}; }
+  location /v3/api-docs { proxy_pass http://${BACKEND_HOSTPORT}; }
 
   location / {
     try_files $uri $uri/ /index.html;

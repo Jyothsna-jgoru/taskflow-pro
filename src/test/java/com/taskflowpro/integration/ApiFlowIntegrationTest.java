@@ -83,6 +83,22 @@ class ApiFlowIntegrationTest {
                 .content("{\"name\":\"Forbidden project\",\"status\":\"ACTIVE\"}"))
         .andExpect(status().isForbidden());
 
+    mvc.perform(
+            post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"outsider@test.local\",\"password\":\"Password1!\"}"))
+        .andExpect(status().isOk());
+    mvc.perform(
+            get("/api/workspaces/{id}/security/login-history", workspaceId)
+                .header("Authorization", bearer(outsider)))
+        .andExpect(status().isForbidden());
+    mvc.perform(
+            get("/api/workspaces/{id}/security/login-history", workspaceId)
+                .header("Authorization", bearer(admin)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].type").value("USER_SIGNED_IN"))
+        .andExpect(jsonPath("$[0].actor.email").value("outsider@test.local"));
+
     JsonNode me =
         body(mvc.perform(get("/api/auth/me").header("Authorization", bearer(admin))).andReturn());
     String ownerId = me.get("id").asText();

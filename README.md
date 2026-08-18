@@ -1,16 +1,34 @@
 # TaskFlow Pro — Distributed Productivity Engine
 
+[![CI](https://github.com/Jyothsna-jgoru/taskflow-pro/actions/workflows/ci.yml/badge.svg)](https://github.com/Jyothsna-jgoru/taskflow-pro/actions/workflows/ci.yml)
+[![Java 21](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/21/)
+[![Spring Boot 3](https://img.shields.io/badge/Spring%20Boot-3-6DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+
 TaskFlow Pro is a multi-user team productivity platform built as a production-minded full-stack portfolio project. Teams create isolated workspaces, organize projects, move tasks through a five-state workflow, collaborate in comments, and inspect live workload and delivery dashboards.
 
-It demonstrates secure REST API design, workspace-scoped RBAC, relational modeling, optimistic concurrency, cache-aside Redis reads, testable service boundaries, containerized local operations, and repeatable CI—using only free and open-source tooling.
+It demonstrates secure REST API design, workspace-scoped RBAC, relational modeling, optimistic concurrency, cache-aside Redis reads, testable service boundaries, containerized local operations, and repeatable CI.
+
+## Live project
+
+### Run the complete TaskFlow Pro demo
+
+[▶ Start TaskFlow Pro with Docker Compose](#run-with-docker-compose)
+
+Sign in with a seeded workspace to explore projects, task boards, workload charts, comments, activity history, and admin login history.
+
+> The complete React, Spring Boot, PostgreSQL, and Redis application runs together through Docker Compose. The repository never claims an external live URL unless one has actually been published.
+
+For the checked hosting configuration and the steps to publish it, see the [hosted deployment guide](docs/hosted-deployment.md).
 
 ## What problem it solves
 
 Work tracking becomes unreliable when ownership, authorization, project context, and progress reporting live in separate tools. TaskFlow Pro keeps them in one tenant-aware system: every request is authorized against workspace membership, each meaningful change produces an audit event, and dashboards are computed from the same persisted work records users edit.
 
-## Highlights
+## What this project demonstrates
 
 - JWT registration, login, logout, current-user lookup, BCrypt password hashing, and consistent JSON errors
+- Privacy-friendly, admin-only login history that records successful workspace-member sign-ins by account and timestamp
 - Workspace-scoped `ADMIN`, `MANAGER`, and `MEMBER` authorization with protected membership administration
 - Projects with ownership, dates, progress, lifecycle states, and archival
 - Paginated tasks with full-text search, filtering, sorting, labels, assignment, due dates, five workflow states, and four priorities
@@ -271,7 +289,7 @@ taskflow-pro/
 - File attachments backed by an S3-compatible local store such as MinIO
 - Workspace-indexed cache eviction and API rate limiting
 - Accessibility audit, end-to-end browser suite, tracing, and production metrics
-- Repeatable cloud deployment templates for an always-free-compatible environment when one is available
+- Deployment templates and production runbooks for managed infrastructure
 
 ## Resume-ready description
 
