@@ -11,6 +11,8 @@ The public website proxies API requests to the API service over HTTPS. This conn
 
 The application activates a dedicated `hosted` Spring profile there, so the managed Redis connection URL is never interpreted as an empty local or test setting.
 
+The backend container also normalizes Render's PostgreSQL connection format into the JDBC format required by Spring Boot, while keeping the database user and password as separate platform-managed variables.
+
 ## Publish the stack
 
 1. Push the current `main` branch to GitHub and confirm its CI workflow is green.

@@ -10,6 +10,8 @@ FROM eclipse-temurin:21-jre-alpine
 RUN addgroup -S taskflow && adduser -S taskflow -G taskflow
 WORKDIR /app
 COPY --from=build /workspace/target/taskflow-pro-backend-1.0.0.jar app.jar
+COPY docker-entrypoint.sh docker-entrypoint.sh
+RUN chmod 0555 docker-entrypoint.sh
 USER taskflow
 EXPOSE 8080
-ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-jar", "/app/app.jar"]
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
