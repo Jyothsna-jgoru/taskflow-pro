@@ -6,8 +6,8 @@ import com.taskflowpro.exception.ApiException;
 import com.taskflowpro.exception.ConflictException;
 import com.taskflowpro.mapper.ApiMapper;
 import com.taskflowpro.repository.UserRepository;
-import com.taskflowpro.repository.WorkspaceMemberRepository;
 import com.taskflowpro.repository.WorkspaceInvitationRepository;
+import com.taskflowpro.repository.WorkspaceMemberRepository;
 import com.taskflowpro.security.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -102,7 +102,8 @@ public class AuthService {
                         HttpStatus.BAD_REQUEST, "This invitation link is invalid or has expired"));
     if (invitation.isExpired(java.time.Instant.now())) {
       invitations.delete(invitation);
-      throw new ApiException(HttpStatus.BAD_REQUEST, "This invitation link is invalid or has expired");
+      throw new ApiException(
+          HttpStatus.BAD_REQUEST, "This invitation link is invalid or has expired");
     }
     if (!invitation.getEmail().equalsIgnoreCase(request.email().trim()))
       throw new ApiException(

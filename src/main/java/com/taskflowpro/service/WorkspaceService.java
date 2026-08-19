@@ -175,7 +175,10 @@ public class WorkspaceService {
     Optional<User> existingUser = users.findByEmailIgnoreCase(email);
     if (existingUser.isPresent()) {
       return new InviteOrAddResponse(
-          "ADDED", addMemberToWorkspace(workspace, existingUser.get(), request.role(), actor), null, null);
+          "ADDED",
+          addMemberToWorkspace(workspace, existingUser.get(), request.role(), actor),
+          null,
+          null);
     }
 
     Instant expiresAt = Instant.now().plus(INVITATION_VALIDITY);
@@ -199,7 +202,11 @@ public class WorkspaceService {
         null,
         actor,
         EventType.MEMBER_INVITED,
-        actor.getDisplayName() + " created a pending invitation for " + email + " as " + request.role());
+        actor.getDisplayName()
+            + " created a pending invitation for "
+            + email
+            + " as "
+            + request.role());
     return new InviteOrAddResponse("INVITED", null, mapper.invitation(invitation), rawToken);
   }
 
@@ -260,7 +267,9 @@ public class WorkspaceService {
         null,
         actor,
         EventType.MEMBER_INVITED,
-        actor.getDisplayName() + " refreshed the pending invitation link for " + invitation.getEmail());
+        actor.getDisplayName()
+            + " refreshed the pending invitation link for "
+            + invitation.getEmail());
     return new InviteOrAddResponse("INVITED", null, mapper.invitation(invitation), rawToken);
   }
 
@@ -268,18 +277,22 @@ public class WorkspaceService {
   public InvitationPreviewResponse previewInvitation(String rawToken) {
     WorkspaceInvitation invitation = invitationByToken(rawToken);
     if (invitation.isExpired(Instant.now()))
-      throw new ApiException(HttpStatus.BAD_REQUEST, "This invitation link is invalid or has expired");
+      throw new ApiException(
+          HttpStatus.BAD_REQUEST, "This invitation link is invalid or has expired");
     return new InvitationPreviewResponse(
         invitation.getEmail(), invitation.getWorkspace().getName(), invitation.getExpiresAt());
   }
 
   private WorkspaceInvitation invitationByToken(String rawToken) {
     if (rawToken == null || rawToken.isBlank())
-      throw new ApiException(HttpStatus.BAD_REQUEST, "This invitation link is invalid or has expired");
+      throw new ApiException(
+          HttpStatus.BAD_REQUEST, "This invitation link is invalid or has expired");
     return invitations
         .findByTokenHash(invitationTokens.hash(rawToken))
         .orElseThrow(
-            () -> new ApiException(HttpStatus.BAD_REQUEST, "This invitation link is invalid or has expired"));
+            () ->
+                new ApiException(
+                    HttpStatus.BAD_REQUEST, "This invitation link is invalid or has expired"));
   }
 
   @Transactional
@@ -329,7 +342,10 @@ public class WorkspaceService {
         null,
         actor,
         EventType.MEMBER_REMOVED,
-        actor.getDisplayName() + " removed " + target.getUser().getDisplayName() + " from the workspace");
+        actor.getDisplayName()
+            + " removed "
+            + target.getUser().getDisplayName()
+            + " from the workspace");
     members.delete(target);
   }
 

@@ -99,8 +99,7 @@ class ApiFlowIntegrationTest {
     mvc.perform(get("/api/invitations/{token}", invitationToken))
         .andExpect(status().isBadRequest());
     mvc.perform(
-            get("/api/workspaces/{id}/members", workspaceId)
-                .header("Authorization", bearer(admin)))
+            get("/api/workspaces/{id}/members", workspaceId).header("Authorization", bearer(admin)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[1].email").value("pending@test.local"))
         .andExpect(jsonPath("$[1].role").value("MANAGER"));

@@ -41,7 +41,10 @@ public final class WorkspaceDtos {
       Instant expiresAt) {}
 
   public record InviteOrAddResponse(
-      String action, MemberResponse member, InvitationResponse invitation, String invitationToken) {}
+      String action,
+      MemberResponse member,
+      InvitationResponse invitation,
+      String invitationToken) {}
 
   public record InvitationPreviewResponse(String email, String workspaceName, Instant expiresAt) {}
 }

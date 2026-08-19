@@ -87,13 +87,15 @@ class WorkspaceServiceTest {
     Workspace workspace = new Workspace("Delivery", null, actor);
     when(workspaces.findById(workspace.getId())).thenReturn(Optional.of(workspace));
     when(users.findByEmailIgnoreCase("new.teammate@example.com")).thenReturn(Optional.empty());
-    when(invitations.findByWorkspaceIdAndEmailIgnoreCase(workspace.getId(), "new.teammate@example.com"))
+    when(invitations.findByWorkspaceIdAndEmailIgnoreCase(
+            workspace.getId(), "new.teammate@example.com"))
         .thenReturn(Optional.empty());
     when(invitations.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     var result =
         service.inviteOrAdd(
-            workspace.getId(), new MemberRequest("new.teammate@example.com", WorkspaceRole.MANAGER));
+            workspace.getId(),
+            new MemberRequest("new.teammate@example.com", WorkspaceRole.MANAGER));
 
     assertEquals("INVITED", result.action());
     assertNull(result.member());
@@ -101,6 +103,11 @@ class WorkspaceServiceTest {
     assertEquals(WorkspaceRole.MANAGER, result.invitation().role());
     assertNotNull(result.invitationToken());
     verify(activity)
-        .record(any(), isNull(), eq(actor), eq(EventType.MEMBER_INVITED), contains("pending invitation"));
+        .record(
+            any(),
+            isNull(),
+            eq(actor),
+            eq(EventType.MEMBER_INVITED),
+            contains("pending invitation"));
   }
 }
