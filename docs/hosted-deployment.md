@@ -13,11 +13,9 @@ The application activates a dedicated `hosted` Spring profile there, so the mana
 
 The backend container also normalizes Render's PostgreSQL connection format into the JDBC format required by Spring Boot, while keeping the database user and password as separate platform-managed variables.
 
-## Published demonstration
+## Portfolio showcase
 
-- Web application: [https://jyothsna-taskflow-pro-web.onrender.com/login](https://jyothsna-taskflow-pro-web.onrender.com/login)
-- API health: [https://jyothsna-taskflow-pro-api.onrender.com/actuator/health](https://jyothsna-taskflow-pro-api.onrender.com/actuator/health)
-- Swagger UI: [https://jyothsna-taskflow-pro-api.onrender.com/swagger-ui.html](https://jyothsna-taskflow-pro-api.onrender.com/swagger-ui.html)
+The permanent static project showcase is published through GitHub Pages at [https://jyothsna-jgoru.github.io/taskflow-pro/](https://jyothsna-jgoru.github.io/taskflow-pro/). It presents the real implementation without claiming that GitHub Pages runs the Spring Boot API, PostgreSQL, or Redis services.
 
 ## Publish the stack
 

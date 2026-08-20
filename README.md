@@ -9,17 +9,11 @@ TaskFlow Pro is a multi-user team productivity platform built as a production-mi
 
 It demonstrates secure REST API design, workspace-scoped RBAC, relational modeling, optimistic concurrency, cache-aside Redis reads, testable service boundaries, containerized local operations, and repeatable CI.
 
-## Live project
+## Project showcase
 
-### Open the public TaskFlow Pro demo
+[▶ Explore the TaskFlow Pro portfolio showcase](https://jyothsna-jgoru.github.io/taskflow-pro/)
 
-[▶ Open the live TaskFlow Pro demo](https://jyothsna-taskflow-pro-web.onrender.com/login)
-
-Sign in with a seeded workspace to explore projects, task boards, workload charts, comments, activity history, and admin login history. The first request after a period of inactivity can take a short time while the hosted services wake up.
-
-For a local complete-stack run, see [Run with Docker Compose](#run-with-docker-compose).
-
-For the checked hosting configuration and the steps to publish it, see the [hosted deployment guide](docs/hosted-deployment.md).
+The GitHub Pages site provides a permanent, static overview of the real TaskFlow Pro implementation: product capabilities, architecture, RBAC model, quality practices, and source code. The complete multi-user application runs locally with Docker Compose; see [Run with Docker Compose](#run-with-docker-compose).
 
 ## What problem it solves
 

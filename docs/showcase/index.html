@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="TaskFlow Pro is a distributed team productivity platform built with Java, Spring Boot, React, PostgreSQL, Redis, JWT RBAC, Docker, and CI."
+    />
+    <title>TaskFlow Pro — Distributed Productivity Engine</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="TaskFlow Pro home">
+        <span class="brand-mark">TF</span>
+        <span>TaskFlow <strong>Pro</strong></span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#capabilities">Capabilities</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#quality">Quality</a>
+      </nav>
+      <a class="button button-small" href="https://github.com/Jyothsna-jgoru/taskflow-pro">View source</a>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top">
+        <div class="hero-copy">
+          <p class="eyebrow">Portfolio project · distributed productivity engine</p>
+          <h1>Clarity for every task.<br /><span>Momentum for every team.</span></h1>
+          <p class="hero-text">
+            TaskFlow Pro is a multi-user work-management platform for teams that need secure workspaces,
+            accountable delivery, and useful project visibility in one focused application.
+          </p>
+          <div class="hero-actions">
+            <a class="button" href="https://github.com/Jyothsna-jgoru/taskflow-pro">Explore the repository</a>
+            <a class="text-link" href="#architecture">See how it works <span aria-hidden="true">↓</span></a>
+          </div>
+          <div class="stack-row" aria-label="Technology highlights">
+            <span>Java 21</span><span>Spring Boot</span><span>React</span><span>PostgreSQL</span><span>Redis</span>
+          </div>
+        </div>
+
+        <div class="workflow-card" aria-label="TaskFlow workflow model">
+          <div class="card-topline">
+            <span>WORKFLOW MODEL</span>
+            <span class="live-dot">Workspace scoped</span>
+          </div>
+          <h2>Move meaningful work forward</h2>
+          <div class="board">
+            <article class="task-column todo">
+              <p>TO DO <span>02</span></p>
+              <div class="mini-task"><b>Design workspace flow</b><small>High · Product</small></div>
+              <div class="mini-task soft"><b>Review release scope</b><small>Medium · Delivery</small></div>
+            </article>
+            <article class="task-column progress">
+              <p>IN PROGRESS <span>01</span></p>
+              <div class="mini-task accent"><b>Implement task filters</b><small>Urgent · Engineering</small></div>
+            </article>
+            <article class="task-column done">
+              <p>DONE <span>01</span></p>
+              <div class="mini-task complete"><b>Secure API access</b><small>JWT + RBAC</small></div>
+            </article>
+          </div>
+          <p class="card-note">A visual representation of the product workflow, built from the real task states in TaskFlow Pro.</p>
+        </div>
+      </section>
+
+      <section class="proof-strip" aria-label="Project foundations">
+        <div><strong>5</strong><span>task workflow states</span></div>
+        <div><strong>3</strong><span>workspace roles</span></div>
+        <div><strong>JWT</strong><span>secured REST APIs</span></div>
+        <div><strong>CI</strong><span>automated quality checks</span></div>
+      </section>
+
+      <section class="section capabilities" id="capabilities">
+        <div class="section-heading">
+          <p class="eyebrow">Product capabilities</p>
+          <h2>Built for real team coordination.</h2>
+          <p>Each feature is designed around workspace isolation, clear ownership, and an auditable delivery process.</p>
+        </div>
+        <div class="capability-grid">
+          <article>
+            <span class="number">01</span>
+            <h3>Secure workspace access</h3>
+            <p>Registration, JWT authentication, BCrypt password hashing, workspace-scoped authorization, and admin-managed invitations.</p>
+          </article>
+          <article>
+            <span class="number">02</span>
+            <h3>Project and task delivery</h3>
+            <p>Projects, task boards, priorities, due dates, labels, assignment, filters, search, pagination, and optimistic locking.</p>
+          </article>
+          <article>
+            <span class="number">03</span>
+            <h3>Team collaboration</h3>
+            <p>Task comments and readable activity history make changes visible across the workspace without losing accountability.</p>
+          </article>
+          <article>
+            <span class="number">04</span>
+            <h3>Decision-ready dashboards</h3>
+            <p>Live workload, completion, project progress, overdue work, due-this-week tasks, and recent activity use persisted backend data.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section architecture" id="architecture">
+        <div class="section-heading">
+          <p class="eyebrow">System design</p>
+          <h2>A modular full-stack architecture.</h2>
+          <p>The browser never receives database entities directly. Requests pass through validated DTOs, services, authorization checks, and persistence boundaries.</p>
+        </div>
+        <div class="architecture-flow" aria-label="TaskFlow Pro architecture flow">
+          <div class="flow-node browser-node"><span>01</span><b>React dashboard</b><small>React · TypeScript · TanStack Query</small></div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-node api-node"><span>02</span><b>Spring Boot API</b><small>Controllers · DTOs · Services · RBAC</small></div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-node data-node"><span>03</span><b>PostgreSQL</b><small>Flyway · JPA · indexed relational data</small></div>
+          <div class="cache-branch"><span>↗</span><b>Redis cache-aside</b><small>Dashboard and task-list reads</small></div>
+        </div>
+        <div class="architecture-notes">
+          <p><b>Authorization</b><span>Every protected request verifies workspace membership and role.</span></p>
+          <p><b>Consistency</b><span>Task version checks prevent silent concurrent overwrites.</span></p>
+          <p><b>Performance</b><span>Cache invalidation follows project, task, and membership mutations.</span></p>
+        </div>
+      </section>
+
+      <section class="section roles">
+        <div class="section-heading compact">
+          <p class="eyebrow">Access model</p>
+          <h2>Permissions match how teams work.</h2>
+        </div>
+        <div class="role-grid">
+          <article><span class="role-tag admin">ADMIN</span><h3>Workspace ownership</h3><p>Manage members, roles, invitations, workspace settings, and login history.</p></article>
+          <article><span class="role-tag manager">MANAGER</span><h3>Project delivery</h3><p>Create and manage projects while assigning and coordinating work across the team.</p></article>
+          <article><span class="role-tag member">MEMBER</span><h3>Focused contribution</h3><p>Create tasks, update work, participate in comments, and see workspace progress.</p></article>
+        </div>
+      </section>
+
+      <section class="section quality" id="quality">
+        <div class="quality-card">
+          <div>
+            <p class="eyebrow">Engineering quality</p>
+            <h2>Built to be inspected, tested, and run locally.</h2>
+          </div>
+          <div class="quality-list">
+            <p><span>✓</span> Flyway database migrations and development seed data</p>
+            <p><span>✓</span> JUnit, MockMvc, Mockito, Testcontainers, and frontend checks</p>
+            <p><span>✓</span> Docker Compose for the complete local stack</p>
+            <p><span>✓</span> Swagger/OpenAPI documentation and GitHub Actions CI</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta">
+        <p class="eyebrow">Explore the implementation</p>
+        <h2>See the full source, architecture, and local setup.</h2>
+        <p>This page is a static portfolio showcase. The complete multi-user application is available in the repository and runs locally with Docker Compose.</p>
+        <a class="button" href="https://github.com/Jyothsna-jgoru/taskflow-pro">Open TaskFlow Pro on GitHub</a>
+      </section>
+    </main>
+
+    <footer>
+      <span>TaskFlow Pro · Distributed Productivity Engine</span>
+      <a href="https://github.com/Jyothsna-jgoru/taskflow-pro">Jyothsna-jgoru/taskflow-pro</a>
+    </footer>
+  </body>
+</html>
