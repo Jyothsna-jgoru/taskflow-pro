@@ -11,13 +11,13 @@ It demonstrates secure REST API design, workspace-scoped RBAC, relational modeli
 
 ## Live project
 
-### Run the complete TaskFlow Pro demo
+### Open the public TaskFlow Pro demo
 
-[▶ Start TaskFlow Pro with Docker Compose](#run-with-docker-compose)
+[▶ Open the live TaskFlow Pro demo](https://jyothsna-taskflow-pro-web.onrender.com/login)
 
-Sign in with a seeded workspace to explore projects, task boards, workload charts, comments, activity history, and admin login history.
+Sign in with a seeded workspace to explore projects, task boards, workload charts, comments, activity history, and admin login history. The first request after a period of inactivity can take a short time while the hosted services wake up.
 
-> The complete React, Spring Boot, PostgreSQL, and Redis application runs together through Docker Compose. The repository never claims an external live URL unless one has actually been published.
+For a local complete-stack run, see [Run with Docker Compose](#run-with-docker-compose).
 
 For the checked hosting configuration and the steps to publish it, see the [hosted deployment guide](docs/hosted-deployment.md).
 
