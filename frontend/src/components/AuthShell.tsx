@@ -40,7 +40,7 @@ export function AuthShell({
             ))}
           </div>
         </div>
-        <p className="relative text-xs text-slate-500">Open-source local stack · No paid services required</p>
+        <p className="relative text-xs text-slate-500">Open-source local stack · Built by Jyothsna G</p>
       </section>
       <section className="flex min-h-screen items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
